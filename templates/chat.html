@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT 요리 상담</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(-180deg, #c07cff 0%, #ffffff 100%);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+        }
+        
+        .chat-container {
+            background: linear-gradient(-180deg, #c07cff 0%, #ffffff 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .user-message {
+            background-color: #ffffff;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .assistant-message {
+            background-color: #ffffff;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .error-message {
+            background-color: #ffffff;
+            border-left: 4px solid #f44336;
+        }
+        
+        .message-content {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        
+        .message-actions {
+            text-align: right;
+        }
+        
+        .save-recipe-btn {
+            background-color: #4caf50;
+            color: rgb(255, 255, 255);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .save-recipe-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .save-recipe-btn:disabled {
+            background-color: #ffffff;
+            cursor: not-allowed;
+        }
+        
+        .input-container {
+            background: rgb(255, 255, 255);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        
+        .question-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 50px;
+        }
+        
+        .question-input:focus {
+            outline: none;
+            border-color: #4caf50; 
+        }
+
+        .send-button {
+            background-color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            justify-content: center;  /* 수평 중앙 정렬 */
+            align-items: center;      /* 수직 중앙 정렬 */
+            font-size: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .send-button:hover {
+            background-color: #b2cdff;
+            color : rgb(0, 0, 0);
+            transform: scale(1.05);
+        }
+                
+        .send-button:disabled {
+            background-color: #ffffff;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .control-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: #000000;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #757575;
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: #ff0000;
+            color: rgb(255, 255, 255);
+        }
+        
+        .no-history {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+        }
+        
+        .user-info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .recipe-save-form {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 2px dashed #ddd;
+        }
+
+        .recipe-save-form input,
+        .recipe-save-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .recipe-save-form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🍳 ChatGPT 요리 상담</h1>
+        <p>요리와 레시피에 대해 무엇이든 물어보세요!</p>
+    </div>
+
+    <div class="user-info">
+        <strong>👋 안녕하세요, <span id="username">사용자</span>님!</strong>
+    </div>
+
+    <div class="control-buttons">
+        <a href="/my-recipes" class="control-btn btn-primary">📋 내 레시피</a>
+        <button onclick="loadChatHistory()" class="control-btn btn-secondary">📜 채팅 기록 보기</button>
+        <button onclick="clearChatHistory()" class="control-btn btn-danger">🗑️ 기록 삭제</button>
+    </div>
+
+    <div id="chat-container" class="chat-container">
+        <p class="no-history">새로운 채팅을 시작해보세요! 요리에 관한 질문을 입력해주세요.</p>
+    </div>
+
+    <div class="input-container">
+        <div class="input-group">
+            <textarea 
+                id="question" 
+                class="question-input" 
+                placeholder="예: 김치찌개 레시피"
+                rows="2"
+            ></textarea>
+            <button id="send-button" class="send-button" onclick="sendMessage()" title="질문하기">
+                👨‍🍳
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 전역 변수
+        let isLoading = false;
+        let chatHistory = [];
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChat();
+            loadChatHistory();
+        });
+
+        // 채팅 초기화
+        function initializeChat() {
+            const questionInput = document.getElementById('question');
+            
+            // Enter 키로 메시지 전송 (Shift+Enter는 줄바꿈)
+            questionInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
+
+        // 메시지 전송
+        async function sendMessage() {
+            const questionInput = document.getElementById('question');
+            const sendButton = document.getElementById('send-button');
+            const question = questionInput.value.trim();
+            
+            if (!question || isLoading) {
+                return;
+            }
+            
+            // UI 상태 변경
+            isLoading = true;
+            sendButton.disabled = true;
+            sendButton.textContent = '👨‍🍳';
+            questionInput.disabled = true;
+            
+            try {
+                // 사용자 메시지 표시
+                displayMessage(question, 'user');
+                questionInput.value = '';
+                
+                // ChatGPT API 호출
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        question: question
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || '서버 오류가 발생했습니다.');
+                }
+                
+                const data = await response.json();
+                
+                // AI 응답 표시
+                displayMessage(data.answer, 'assistant', question);
+                
+            } catch (error) {
+                console.error('채팅 오류:', error);
+                displayMessage(`❌ 오류가 발생했습니다: ${error.message}`, 'error');
+            } finally {
+                // UI 상태 복원
+                isLoading = false;
+                sendButton.disabled = false;
+                sendButton.textContent = '👨‍🍳';
+                questionInput.disabled = false;
+                questionInput.focus();
+            }
+        }
+
+        // 메시지 표시
+        function displayMessage(content, type, originalQuestion = '') {
+            const chatContainer = document.getElementById('chat-container');
+            const noHistory = chatContainer.querySelector('.no-history');
+            
+            if (noHistory) {
+                noHistory.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${type}-message`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+            
+            messageDiv.appendChild(contentDiv);
+            
+            // AI 응답에 레시피 저장 버튼 추가
+            if (type === 'assistant') {
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'message-actions';
+                
+                const saveBtn = document.createElement('button');
+                saveBtn.className = 'save-recipe-btn';
+                saveBtn.textContent = '📝 레시피로 저장';
+                saveBtn.onclick = () => showRecipeSaveForm(content, originalQuestion);
+                
+                actionsDiv.appendChild(saveBtn);
+                messageDiv.appendChild(actionsDiv);
+            }
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 레시피 저장 폼 표시
+        function showRecipeSaveForm(content, originalQuestion) {
+            const formHtml = `
+                <div class="recipe-save-form">
+                    <h4>📝 레시피로 저장</h4>
+                    <input type="text" id="recipe-title" placeholder="레시피 제목을 입력하세요" required>
+                    <textarea id="recipe-content" placeholder="레시피 내용을 수정하거나 그대로 사용하세요" required>${content}</textarea>
+                    <div style="margin-top: 10px;">
+                        <button onclick="saveRecipe('${originalQuestion}')" class="save-recipe-btn">저장하기</button>
+                        <button onclick="closeSaveForm(this)" class="save-recipe-btn" style="background-color: #757575; margin-left: 10px;">취소</button>
+                    </div>
+                </div>
+            `;
+            
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = formHtml;
+            
+            event.target.closest('.chat-message').appendChild(tempDiv.firstElementChild);
+            event.target.style.display = 'none';
+        }
+
+        // 레시피 저장
+        async function saveRecipe(originalQuestion) {
+            const title = document.getElementById('recipe-title').value.trim();
+            const content = document.getElementById('recipe-content').value.trim();
+            
+            if (!title || !content) {
+                alert('제목과 내용을 모두 입력해주세요.');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('content', content);
+                formData.append('original_question', originalQuestion);
+                
+                const response = await fetch('/recipes/from-chat', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ 레시피가 저장되었습니다!');
+                    closeSaveForm();
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            } catch (error) {
+                alert('❌ 저장 중 오류가 발생했습니다: ' + error.message);
+            }
+        }
+
+        // 저장 폼 닫기
+        function closeSaveForm(button) {
+            const form = button ? button.closest('.recipe-save-form') : document.querySelector('.recipe-save-form');
+            if (form) {
+                const saveBtn = form.parentElement.querySelector('.save-recipe-btn');
+                if (saveBtn) saveBtn.style.display = 'inline-block';
+                form.remove();
+            }
+        }
+
+        // 채팅 기록 불러오기
+        async function loadChatHistory() {
+            try {
+                const response = await fetch('/chat/history');
+                if (response.ok) {
+                    const data = await response.json();
+                    chatHistory = data.history || [];
+                    
+                    if (data.username) {
+                        document.getElementById('username').textContent = data.username;
+                    }
+                    
+                    displayChatHistory();
+                }
+            } catch (error) {
+                console.error('채팅 기록 로드 오류:', error);
+            }
+        }
+
+        // 채팅 기록 표시
+        function displayChatHistory() {
+            const chatContainer = document.getElementById('chat-container');
+            const noHistory = chatContainer.querySelector('.no-history');
+            
+            if (chatHistory.length === 0) {
+                if (!noHistory) {
+                    chatContainer.innerHTML = '<p class="no-history">새로운 채팅을 시작해보세요! 요리에 관한 질문을 입력해주세요.</p>';
+                }
+                return;
+            }
+            
+            if (noHistory) {
+                noHistory.remove();
+            }
+            
+            chatHistory.forEach(chat => {
+                displayMessage(chat.question, 'user');
+                displayMessage(chat.answer, 'assistant', chat.question);
+            });
+        }
+
+        // 채팅 기록 삭제
+        async function clearChatHistory() {
+            if (!confirm('정말로 모든 채팅 기록을 삭제하시겠습니까?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/chat/history', {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    chatHistory = [];
+                    const chatContainer = document.getElementById('chat-container');
+                    chatContainer.innerHTML = '<p class="no-history">새로운 채팅을 시작해보세요! 요리에 관한 질문을 입력해주세요.</p>';
+                    alert('✅ 채팅 기록이 삭제되었습니다.');
+                } else {
+                    alert('❌ 기록 삭제 중 오류가 발생했습니다.');
+                }
+            } catch (error) {
+                alert('❌ 오류가 발생했습니다: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
