@@ -133,9 +133,9 @@ gantt
 
 ## 📸 와이어프레임
 
-![회원가입 및 로그인 화면](makeuser_login.png)
-![로그인 후 화면](after_login.png)
-![AI 채팅 화면](AI_chat.png)
+![회원가입 및 로그인 화면](./wireframe/makeuser_login.png)
+![로그인 후 화면](./wireframe/after_login.png)
+![AI 채팅 화면](./wireframe/AI_chat.png)
 
 ---
 
