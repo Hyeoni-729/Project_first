@@ -27,21 +27,26 @@ FastAPI와 Jinja2 템플릿을 이용해 구현한 **레시피 관리 및 AI 채
 
 ## 📁 프로젝트 구조
 
-```
-📦 project-root/
-┣ 📜 recipe.py # FastAPI 메인 앱, 라우터
-┣ 📜 auth.py # 사용자 인증, 세션 관리
-┣ 📜 models.py # Pydantic 데이터 모델 정의
-┣ 📜 chatgpt_service.py # OpenAI API 연동 서비스
-┣ 📂 static/ # CSS, JavaScript 등 정적 파일
-┃ ┗ 📜 chat.js # ChatGPT 응답 저장
-┣ 📂 templates/ # HTML 템플릿 파일
-┃ ┣ 📜 recipe.html # 레시피 목록 페이지
-┃ ┣ 📜 recipe_detail.html # 레시피 상세 페이지
-┃ ┣ 📜 chat.html # ChatGPT 채팅 페이지
-┃ ┗ 📜 my_recipes.html # 내 레시피 목록 페이지
-┗ 📜 README.md
-```
+📦 PROJECT_FIRST/
+┣ 📂 static/
+┃ ┗ 📜 chat.js
+┣ 📂 templates/
+┃ ┣ 📜 chat.html
+┃ ┣ 📜 my_recipes.html
+┃ ┣ 📜 recipe_detail.html
+┃ ┗ 📜 recipe.html
+┣ 📂 wireframe/
+┃ ┣ 📜 after_login_app.png
+┃ ┣ 📜 after_login.png
+┃ ┣ 📜 AI_chat.png
+┃ ┗ 📜 makeuser_login.png
+┣ 📜 .gitignore
+┣ 📜 authpy
+┣ 📜 chatgpt_service.py
+┣ 📜 models.py
+┣ 📜 README.md
+┣ 📜 recipe.py
+┗ 📜 requirements.txt
 
 ---
 
