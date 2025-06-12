@@ -133,19 +133,18 @@ gantt
 ## 📸 와이어프레임
 
 ![회원가입 및 로그인 화면](./wireframe/makeuser_login.png)
-<hr style="border: 0; height: 1px; background-image: linear-gradient(to right, transparent, #ccc 50%, transparent);">
+
+---
 
 ![로그인 후 화면 앱 크기](./wireframe/after_login_app.png)
 
-<hr style="border: 0; height: 1px; background-image: linear-gradient(to right, transparent, #ccc 50%, transparent);">
+---
 
 ![로그인 후 화면 웹 크기](./wireframe/after_login.png)
 
-<hr style="border: 0; height: 1px; background-image: linear-gradient(to right, transparent, #ccc 50%, transparent);">
+---
 
 ![AI 채팅 화면](./wireframe/AI_chat.png)
-
-<hr style="border: 0; height: 1px; background-image: linear-gradient(to right, transparent, #ccc 50%, transparent);">
 
 ---
 
