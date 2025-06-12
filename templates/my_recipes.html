@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 내 레시피</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(-180deg, #c07cff 0%, #ffffff 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #667eea;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .nav a:hover {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .nav a.active {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .recipe-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .recipe-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #eee;
+        }
+        
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .recipe-card h4 {
+            color: #333;
+            margin-bottom: 0.75rem;
+            font-size: 1.3rem;
+        }
+        
+        .recipe-card p {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .recipe-meta {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+
+        .recipe-source {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .source-chatgpt {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .source-direct {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .recipe-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            flex: 1;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .recipes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1>📚 내 레시피</h1>
+            <p>저장한 레시피를 확인하세요!</p>
+        </div>
+        
+        <!-- 네비게이션 -->
+        <div class="nav">
+            <div class="nav-links">
+                <a href="/recipes">🍽️ 전체 레시피</a>
+                <a href="/chat-page">🤖 AI 상담</a>
+                <a href="/my-recipes" class="active">📚 내 레시피</a>
+            </div>
+            <div class="user-info">
+                <span>👤 {{ user.username }}님 환영합니다!</span>
+                <a href="#" onclick="logout()" style="color: #ff6b6b;">🚪 로그아웃</a>
+            </div>
+        </div>
+        
+        <!-- 레시피 섹션 -->
+        <div class="recipe-section">
+            <h2>📖 내가 저장한 레시피 목록</h2>
+            
+            <!-- 레시피 목록 -->
+            {% if recipes %}
+                <div class="recipes-grid">
+                    {% for recipe in recipes %}
+                    <div class="recipe-card">
+                        <h4>{{ recipe.title }}</h4>
+                        <p>{{ recipe.content }}</p>
+                        <div class="recipe-meta">
+                            👨‍🍳 작성자: {{ recipe.author }}
+                            <br>📅 작성일: {{ recipe.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            {% if recipe.is_from_chatgpt %}
+                                <span class="recipe-source source-chatgpt">🤖 ChatGPT 추천</span>
+                            {% else %}
+                                <span class="recipe-source source-direct">✍️ 직접 작성</span>
+                            {% endif %}
+                            {% if recipe.original_question %}
+                                <br><small>💬 원래 질문: {{ recipe.original_question }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="recipe-actions">
+                            <a href="/recipes/{{ recipe.id }}" class="btn btn-small btn-info">자세히 보기</a>
+                            <form method="post" action="/recipes/{{ recipe.id }}/delete" style="display: inline;" onsubmit="return confirm('정말 삭제하시겠습니까?')">
+                                <button type="submit" class="btn btn-small btn-danger">삭제</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>📝 저장된 레시피가 없습니다</h3>
+                    <p>ChatGPT 상담을 통해 첫 번째 레시피를 저장해보세요!</p>
+                    <a href="/chat-page" class="btn" style="margin-top: 1rem;">🤖 AI 상담하기</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script>
+        async function logout() {
+            try {
+                const response = await fetch('/logout', { method: 'POST' });
+                const result = await response.json();
+                
+                alert(result.message);
+                window.location.href = '/';
+            } catch (error) {
+                alert('로그아웃 중 오류가 발생했습니다.');
+            }
+        }
+    </script>
+</body>
+</html>
