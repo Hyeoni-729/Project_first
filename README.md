@@ -27,6 +27,7 @@ FastAPI와 Jinja2 템플릿을 이용해 구현한 **레시피 관리 및 AI 채
 
 ## 📁 프로젝트 구조
 
+```
 📦 PROJECT_FIRST/
 ┣ 📂 static/
 ┃ ┗ 📜 chat.js
@@ -47,6 +48,7 @@ FastAPI와 Jinja2 템플릿을 이용해 구현한 **레시피 관리 및 AI 채
 ┣ 📜 README.md
 ┣ 📜 recipe.py
 ┗ 📜 requirements.txt
+```
 
 ---
 
