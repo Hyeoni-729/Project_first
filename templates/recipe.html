@@ -126,6 +126,16 @@
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
+
+        #loginFormContainer {
+            min-width: 350px;
+        }
+
+        .auth-forms.single-form {
+            justify-content: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
         
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -284,7 +294,7 @@
             <p>맛있는 요리 레시피를 찾아보세요!</p>
         </div>
         
-        <div class="nav hidden" id="loggedInNav">
+        <div class="nav" id="loggedInNav" style="display: none;">
             <div class="nav-links">
                 <a href="/recipes">📖 레시피 목록</a>
                 <a href="/chat-page">🤖 AI 상담</a>
@@ -298,7 +308,7 @@
         
         <div class="auth-section" id="authSection">
             <div class="auth-forms">
-                <div class="auth-form">
+                <div class="auth-form" id="registerFormContainer">
                     <h3>📝 회원가입</h3>
                     <form id="registerForm">
                         <div class="form-group">
@@ -317,7 +327,7 @@
                     </form>
                 </div>
                 
-                <div class="auth-form">
+                <div class="auth-form" id="loginFormContainer" style="display: none;">
                     <h3>🔑 로그인</h3>
                     <form id="loginForm">
                         <div class="form-group">
@@ -398,14 +408,14 @@
         }
 
         function showLoggedInState(user) {
-            document.getElementById('authSection').classList.add('hidden');
-            document.getElementById('loggedInNav').classList.remove('hidden');
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('loggedInNav').style.display = 'flex';
             document.getElementById('welcomeMessage').textContent = `👤 ${user.username}님 환영합니다!`;
         }
 
         function showLoggedOutState() {
-            document.getElementById('authSection').classList.remove('hidden');
-            document.getElementById('loggedInNav').classList.add('hidden');
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('loggedInNav').style.display = 'none';
         }
 
         async function logout() {
@@ -423,14 +433,14 @@
         // 회원가입 처리
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+        
             const formData = new FormData(e.target);
             const data = {
                 username: formData.get('username'),
                 email: formData.get('email'),
                 password: formData.get('password')
             };
-            
+        
             try {
                 const response = await fetch('/register', {
                     method: 'POST',
@@ -439,12 +449,15 @@
                     },
                     body: JSON.stringify(data)
                 });
-                
+            
                 const result = await response.json();
-                
+            
                 if (response.ok) {
                     alert(result.message);
-                    e.target.reset();
+                
+                    // 회원가입 성공 후 로그인 폼만 보이도록 전환
+                    showLoginOnlyForm();
+                
                 } else {
                     alert(result.detail || '회원가입 실패');
                 }
@@ -484,6 +497,22 @@
                 alert('오류가 발생했습니다: ' + error.message);
             }
         });
+
+        function showLoginOnlyForm() {
+            // 회원가입 폼 컨테이너 숨기기
+            document.getElementById('registerFormContainer').style.display = 'none';
+    
+            // 로그인 폼 컨테이너 보이기
+            document.getElementById('loginFormContainer').style.display = 'block';
+    
+            // auth-forms를 중앙 정렬
+            const authForms = document.querySelector('.auth-forms');
+            authForms.classList.add('single-form');
+    
+            // 로그인 폼 제목을 더 친근하게 변경
+            const loginTitle = document.querySelector('#loginFormContainer h3');
+            loginTitle.textContent = '🔑 로그인하고 레시피를 확인하세요!';
+        }
     </script>
 </body>
 </html>
