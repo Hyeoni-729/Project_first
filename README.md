@@ -139,7 +139,11 @@ gantt
 
 ## 📸 와이어프레임
 
-![회원가입 및 로그인 화면](./wireframe/makeuser_login.png)
+![회원가입 화면](./wireframe/makeuser.png)
+
+---
+
+![로그인 화면](./wireframe/login.png)
 
 ---
 
