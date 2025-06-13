@@ -192,7 +192,29 @@ async def logout(session_id: Optional[str] = Cookie(None)):
 @app.get("/", response_class=HTMLResponse)
 def home_page(request: Request):
     """메인 홈페이지"""
-    return templates.TemplateResponse("recipe.html", {"request": request})
+    # 레시피 데이터도 함께 전달
+    sorted_recipes = sorted(
+        recipes_db.items(), 
+        key=lambda x: x[1]["created_at"], 
+        reverse=True
+    )
+    
+    recipes_list = [
+        {
+            "id": recipe_id,
+            "title": recipe_data["title"],
+            "content": recipe_data["content"][:100] + "..." if len(recipe_data["content"]) > 100 else recipe_data["content"],
+            "author": recipe_data["author"],
+            "created_at": recipe_data["created_at"],
+            "source": "ChatGPT 추천" if recipe_data.get("is_from_chatgpt", False) else "직접 입력"
+        }
+        for recipe_id, recipe_data in sorted_recipes
+    ]
+    
+    return templates.TemplateResponse(
+        "recipe.html", 
+        {"request": request, "recipes": recipes_list}
+    )
 
 @app.get("/recipes", response_class=HTMLResponse)
 def get_recipes_list(request: Request):
